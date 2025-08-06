@@ -1,0 +1,489 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/api/v1": {
+      "get": {
+        "operationId": "AppController_getHello",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "App"
+        ]
+      }
+    },
+    "/api/v1/brands": {
+      "post": {
+        "operationId": "BrandController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBrandDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Brand created successfully."
+          }
+        },
+        "summary": "Create a new brand",
+        "tags": [
+          "Brands"
+        ]
+      },
+      "get": {
+        "operationId": "BrandController_findAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "List of brands"
+          }
+        },
+        "summary": "List all brands",
+        "tags": [
+          "Brands"
+        ]
+      }
+    },
+    "/api/v1/brands/{id}": {
+      "get": {
+        "operationId": "BrandController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Brand UUID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Brand details"
+          }
+        },
+        "summary": "Get a single brand by ID",
+        "tags": [
+          "Brands"
+        ]
+      }
+    },
+    "/api/v1/products": {
+      "post": {
+        "operationId": "ProductController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProductDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Product created successfully."
+          }
+        },
+        "summary": "Create a new product",
+        "tags": [
+          "Products"
+        ]
+      },
+      "get": {
+        "operationId": "ProductController_findAll",
+        "parameters": [
+          {
+            "name": "brandId",
+            "required": false,
+            "in": "query",
+            "description": "Optional filter by brand ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of products"
+          }
+        },
+        "summary": "List all products",
+        "tags": [
+          "Products"
+        ]
+      }
+    },
+    "/api/v1/products/{id}": {
+      "get": {
+        "operationId": "ProductController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Product UUID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Product details"
+          }
+        },
+        "summary": "Get a single product by ID",
+        "tags": [
+          "Products"
+        ]
+      }
+    },
+    "/api/v1/products/{id}/history": {
+      "post": {
+        "operationId": "ProductController_addHistory",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Product UUID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProductHistoryDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Product history entry created"
+          }
+        },
+        "summary": "Add a product history entry",
+        "tags": [
+          "Products"
+        ]
+      }
+    },
+    "/api/v1/products/{id}/sales": {
+      "post": {
+        "operationId": "ProductController_recordSale",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "productId",
+            "required": true,
+            "in": "path",
+            "description": "ID of the product being sold",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProductSaleDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Product sale recorded successfully"
+          },
+          "404": {
+            "description": "Product or store not found"
+          }
+        },
+        "summary": "Record a new product sale",
+        "tags": [
+          "Products"
+        ]
+      }
+    },
+    "/api/v1/products/sale/{saleId}": {
+      "get": {
+        "operationId": "ProductController_findSale",
+        "parameters": [
+          {
+            "name": "saleId",
+            "required": true,
+            "in": "path",
+            "description": "ID of the sale record",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sale found and returned"
+          },
+          "404": {
+            "description": "Sale not found"
+          }
+        },
+        "summary": "Get details of a specific product sale",
+        "tags": [
+          "Products"
+        ]
+      }
+    },
+    "/api/v1/stores": {
+      "post": {
+        "operationId": "StoreController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateStoreDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Store created successfully"
+          }
+        },
+        "summary": "Create a new store",
+        "tags": [
+          "Stores"
+        ]
+      },
+      "get": {
+        "operationId": "StoreController_findAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "List all stores (id and name)",
+        "tags": [
+          "Stores"
+        ]
+      }
+    },
+    "/api/v1/stores/{id}": {
+      "get": {
+        "operationId": "StoreController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Store UUID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Get store details and sales",
+        "tags": [
+          "Stores"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "Drink Product Management API",
+    "description": "API for managing bottled drink brands, products, sales and history.\n\n📄 [View raw Swagger JSON](http://localhost:3000/swagger.json)",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "schemas": {
+      "CreateBrandDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Star Lager",
+            "description": "The name of the brand"
+          },
+          "description": {
+            "type": "string",
+            "example": "Founded in 1949, one of Nigeria's oldest beer brands.",
+            "description": "Origin story or background of the brand"
+          },
+          "website": {
+            "type": "string",
+            "example": "https://starbeer.com",
+            "description": "Official brand website"
+          },
+          "logoUrl": {
+            "type": "string",
+            "example": "https://cdn.myapp.com/logos/star.png",
+            "description": "Logo image URL"
+          }
+        },
+        "required": [
+          "name",
+          "description"
+        ]
+      },
+      "CreateProductDto": {
+        "type": "object",
+        "properties": {
+          "brandId": {
+            "type": "string",
+            "example": "b5f90162-f6e1-4701-9983-6c61bcb5287a",
+            "description": "Brand ID this product belongs to"
+          },
+          "name": {
+            "type": "string",
+            "example": "Star Lager 500ml",
+            "description": "Product name"
+          },
+          "description": {
+            "type": "string",
+            "example": "Classic lager beer with a crisp refreshing taste.",
+            "description": "Product description"
+          },
+          "volume_ml": {
+            "type": "number",
+            "example": 500,
+            "description": "Volume in milliliters"
+          },
+          "production_date": {
+            "type": "string",
+            "example": "2025-07-15",
+            "description": "Production date (ISO format)"
+          },
+          "expiration_date": {
+            "type": "string",
+            "example": "2026-07-15",
+            "description": "Expiration date (ISO format)"
+          }
+        },
+        "required": [
+          "brandId",
+          "name",
+          "description",
+          "volume_ml",
+          "production_date",
+          "expiration_date"
+        ]
+      },
+      "CreateProductHistoryDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "example": "Packaging Redesign",
+            "description": "Title of the update"
+          },
+          "description": {
+            "type": "string",
+            "example": "In July 2025, we switched to a more eco-friendly bottle design.",
+            "description": "Detailed description of the product update or history"
+          },
+          "updatedBy": {
+            "type": "string",
+            "example": "admin@brand.com",
+            "description": "Who added this history"
+          }
+        },
+        "required": [
+          "title",
+          "description"
+        ]
+      },
+      "CreateProductSaleDto": {
+        "type": "object",
+        "properties": {
+          "storeId": {
+            "type": "string",
+            "example": "store-uuid"
+          },
+          "predecessorStoreId": {
+            "type": "string",
+            "example": "prev-store-uuid"
+          },
+          "quantity": {
+            "type": "number",
+            "example": 100
+          },
+          "costPrice": {
+            "type": "number",
+            "example": 1200.5
+          }
+        },
+        "required": [
+          "storeId",
+          "quantity",
+          "costPrice"
+        ]
+      },
+      "CreateStoreDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Shoprite Ikeja",
+            "description": "Store name"
+          },
+          "address": {
+            "type": "string",
+            "example": "Ikeja City Mall, Lagos",
+            "description": "Store address"
+          },
+          "phone": {
+            "type": "string",
+            "example": "+2348012345678",
+            "description": "Contact phone number"
+          },
+          "email": {
+            "type": "string",
+            "example": "manager@shoprite.com",
+            "description": "Store email"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      }
+    }
+  }
+}

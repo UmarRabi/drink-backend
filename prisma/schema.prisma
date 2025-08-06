@@ -1,0 +1,71 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql" // or mysql/sqlite based on your setup
+  url      = env("DATABASE_URL")
+}
+
+model Brand {
+  id          String    @id @default(uuid())
+  name        String    @unique
+  description String    // Brand origin story / background
+  website     String?   // Optional brand site
+  logoUrl     String?   // Optional brand logo
+  products    Product[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @default(now()) @updatedAt
+}
+
+model Product {
+  id              String           @id @default(uuid())
+  brandId         String
+  brand           Brand            @relation(fields: [brandId], references: [id])
+  name            String
+  description     String
+  volume_ml       Int
+  production_date DateTime
+  expiration_date DateTime
+  histories       ProductHistory[]
+  sales           ProductSale[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+}
+
+model ProductHistory {
+  id          String   @id @default(uuid())
+  product     Product  @relation(fields: [productId], references: [id])
+  productId   String
+  title       String   // e.g., "Origin of Product", "Packaging Update"
+  description String   // Detailed story or update
+  updatedBy   String?  // Who added this entry (optional)
+  updatedAt   DateTime @default(now())
+}
+
+model Store {
+  id        String          @id @default(uuid())
+  name      String
+  address   String?
+  phone     String?
+  email     String?
+  sales     ProductSale[]
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @default(now()) @updatedAt
+
+  ProductSale ProductSale[] @relation(name: "from_store")
+}
+
+model ProductSale {
+  id        String   @id @default(uuid())
+  product   Product  @relation(fields: [productId], references: [id])
+  productId String
+  description String?  
+  store     Store    @relation(fields: [storeId], references: [id])
+  storeId   String
+  predecessorStore Store? @relation(fields: [predecessorStoreId], references: [id], name: "from_store")
+  predecessorStoreId String?
+  quantity  Int
+  costPrice Float
+  saleDate  DateTime @default(now())
+}
