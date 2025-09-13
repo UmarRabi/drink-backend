@@ -1,10 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from './prisma.service';
 import { CreateProductDto, CreateProductHistoryDto, CreateProductSaleDto } from 'src/dtos/product.dto';
+import { UtilsService } from './utils.service';
 
 @Injectable()
 export class ProductService {
-    constructor(private readonly prisma: PrismaService) { }
+    constructor(private readonly prisma: PrismaService, private readonly utilService: UtilsService) { }
 
     async create(dto: CreateProductDto) {
         // Optional: check if brand exists
@@ -16,7 +17,7 @@ export class ProductService {
             throw new NotFoundException(`Brand with id '${dto.brandId}' not found.`);
         }
 
-        return this.prisma.product.create({
+        const result = await this.prisma.product.create({
             data: {
                 name: dto.name,
                 description: dto.description,
@@ -28,6 +29,17 @@ export class ProductService {
                 },
             },
         });
+        const url = `${process.env.FRONTEND_URL}/products/${result.id}`
+        await this.utilService.generateQRCode(url, result.id)
+
+        return await this.prisma.product.update(
+            {
+                where: { id: result.id },
+                data: { qrcode_url: `${url}.png` }
+            }
+        )
+
+
     }
 
     async findAll(brandId?: string) {
@@ -40,6 +52,7 @@ export class ProductService {
                 description: true,
                 production_date: true,
                 expiration_date: true,
+                qrcode_url:true,
                 brand: {
                     select: {
                         id: true,
@@ -127,9 +140,10 @@ export class ProductService {
     }
 
     async findSale(saleId: string) {
-        return await this.prisma.productSale.findFirst({
-            where: { id: saleId },
-            include: { store: true, predecessorStore: true, product: { include: { histories: true, brand: true } } }
+        console.log(saleId)
+        return await this.prisma.product.findFirst({
+            where: { id: saleId},
+            include: { sales: {include:{predecessorStore:true, store:true}},histories: true, brand: true }
         })
     }
 

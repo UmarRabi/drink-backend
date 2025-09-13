@@ -8,10 +8,18 @@ import { BrandService } from './services/brand.service';
 import { PrismaService } from './services/prisma.service';
 import { StoreService } from './services/store.service';
 import { StoreController } from './controllers/store.controller';
+import { UtilsService } from './services/utils.service';
+import { ServeStaticModule } from '@nestjs/serve-static';
 
 @Module({
-  imports: [],
+  imports: [
+    ServeStaticModule.forRoot({
+      // rootPath: join(__dirname, '..', 'uploads'),
+      rootPath: './public',
+      serveRoot: '/public',
+    }),
+  ],
   controllers: [AppController, BrandController, ProductController, StoreController],
-  providers: [AppService, ProductService, BrandService, PrismaService, StoreService],
+  providers: [AppService, ProductService, BrandService, PrismaService, StoreService, UtilsService],
 })
 export class AppModule {}
